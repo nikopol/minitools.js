@@ -45,16 +45,18 @@ an object with client info
 var
 hash=(function(){
 	var h, p,
+	encode=function(s){ return s.replace(/ /g,'%20').replace(/#/,'%23') },
+	decode=function(s){ return s.replace(/%20/g,' ').replace(/%23/,'#') },
 	serialize=function(){
 		var a=[], k;
 		for (k in h) a.push(k+"="+h[k]);
 		p=a.join("|");
-		document.location.hash="#"+p.replace(/ /g,'%20');
+		document.location.hash="#"+encode(p);
 		return true;
 	},
 	unserialize=function(){
 		h={};
-		p=document.location.hash.substr(1).replace(/%20/g,' ');
+		p=decode(document.location.hash.substr(1));
 		if(p.length) {
 			var lst=p.split("|");
 			lst.forEach(function(l){
@@ -67,10 +69,10 @@ hash=(function(){
 	return {
 		del: function(key){ return key in h ? false : serialize(delete h[key]) },
 		set: function(key,val){ return serialize(typeof(key)=='object' ? h = key : h[key] = val) },
-		get: function(key){ return key==undefined ? h : (h[key]||'').replace(/%20/g,' ') },
+		get: function(key){ return key==undefined ? h : decode(h[key]||'') },
 		onchange: function(cb){
 			window.onhashchange=function(){
-				var q=document.location.hash.substr(1).replace(/%20/g,' ');
+				var q=decode(document.location.hash.substr(1));
 				if(q!=p){
 					unserialize();
 					if(cb) cb();
