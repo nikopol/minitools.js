@@ -40,10 +40,9 @@ an object with client info
 
 */
 
-"use strict";
-
 var
 hash=(function(){
+	"use strict";
 	var h, p,
 	encode=function(s){ return s.replace(/ /g,'%20').replace(/#/,'%23') },
 	decode=function(s){ return s.replace(/%20/g,' ').replace(/%23/,'#') },
@@ -83,6 +82,7 @@ hash=(function(){
 })(),
 
 hotkeys=(function(){
+	"use strict";
 	var 
 	on=false,
 	KEYS={
@@ -148,6 +148,7 @@ hotkeys=(function(){
 })(),
 
 browser=function(){
+	"use strict";
 	var b={}, z=navigator.userAgent;
 	if(/MSIE\s([\d\.]+)/.test(z)) b.IE=parseFloat(RegExp.$1);
 	z.replace(/\s\(.+\)/g,'').split(' ').forEach(function(n){ if(/^(.+)\/(.+)$/.test(n)) b[RegExp.$1]=parseFloat(RegExp.$2) });
