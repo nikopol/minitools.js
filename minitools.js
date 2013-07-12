@@ -1,5 +1,5 @@
-// minitools.js 0.1
-// ~L~ nikomomo@gmail.com 2012
+// minitools.js 0.2
+// ~L~ nikomomo@gmail.com 2012-2013
 // https://github.com/nikopol/minitools.js
 
 /*
