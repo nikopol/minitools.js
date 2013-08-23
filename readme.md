@@ -19,8 +19,8 @@ manage variables in the url anchor.
 
 handle hotkeys
 
-	hotkeys.add("CTRL+U",function(){})              //define a hotkey
-	       .add(["CTRL+Q","ALT+F4"],function(){});  //define 2 equivalents hotkeys
+	hotkeys.add("CTRL U",function(){})              //define a hotkey
+	       .add(["CTRL Q","ALT F4"],function(){});  //define 2 equivalents hotkeys
 	hotkeys.clear();                                //unset all hotkeys
 
 **browser**
