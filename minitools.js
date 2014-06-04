@@ -44,7 +44,7 @@ var
 hash=(function(){
 	"use strict";
 	var h, p,
-	hash=function(){ return document.location.href.replace(/^.*?#/,'') },
+	hash=function(){ return document.location.hash.slice(1) },
 	encode=function(s){ return s.replace(/&/g,'%26').replace(/=/g,'%3D') },
 	decode=function(s){ return decodeURIComponent(s) },
 	serialize=function(){
@@ -66,9 +66,9 @@ hash=(function(){
 	};
 	unserialize();
 	return {
-		del: function(key){ if(h[key]!=undefined){ delete h[key]; return serialize(h) } return false },
+		del: function(key){ if(h.hasOwnProperty(key)){ delete h[key]; return serialize(h) } return false },
 		set: function(key,val){ return serialize(typeof(key)=='object' ? h = key : h[key] = val) },
-		get: function(key){ return key==undefined ? h : h[key]||'' },
+		get: function(key){ return arguments.length ? h[key]||'' : h },
 		link: function(o){
 			var z=[];
 			if(o) for(var k in o) z.push(k+'='+encode(o[k]));
