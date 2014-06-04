@@ -1,4 +1,4 @@
-minitools.js 0.2
+minitools.js 0.3
 ================
 
 minitools.js is a collection of small js helpers for "modern" browsers.
