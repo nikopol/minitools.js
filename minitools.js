@@ -1,5 +1,5 @@
-// minitools.js 0.4
-// ~L~ nikomomo@gmail.com 2012-2014
+// minitools.js 0.5
+// ~L~ nikomomo@gmail.com 2012-2015
 // https://github.com/nikopol/minitools.js
 
 /*
@@ -47,7 +47,7 @@ hash=(function(){
 	"use strict";
 	var h, p,
 	hash=function(){ return document.location.hash.slice(1) },
-	encode=function(s){ return s.replace(/&/g,'%26').replace(/=/g,'%3D') },
+	encode=function(s){ return s.toString().replace(/&/g,'%26').replace(/=/g,'%3D') },
 	decode=function(s){ return decodeURIComponent(s) },
 	serialize=function(noev){
 		var a=[], k;
@@ -73,8 +73,8 @@ hash=(function(){
 		set: function(key,val,noev){ return typeof(key)=='object' ? serialize(val,h=key) : serialize(noev,h[key]=val) },
 		get: function(key){ return arguments.length ? h[key]||'' : h },
 		link: function(o){
-			var z=[];
-			if(o) for(var k in o) z.push(k+'='+encode(o[k]));
+			var z=[], k;
+			if(o) for(k in o) z.push(k+'='+encode(o[k]));
 			return '#'+z.join('&');
 		},
 		onchange: function(cb){
@@ -91,7 +91,6 @@ hash=(function(){
 hotkeys=(function(){
 	"use strict";
 	var 
-	on=false,
 	KEYS={
 		ESC:27, TAB:9, SPACE:32, RETURN:13, ENTER:13, BACKSPACE:8, BS:8, SCROLL:145, CAPSLOCK:20, NUMLOCK:144,
 		PAUSE:19, INSERT:45, DEL:46, HOME:36, END:35, PAGEUP:33, PAGEDOWN:34, LEFT:37, UP:38, RIGHT:39, DOWN:40,
@@ -99,21 +98,21 @@ hotkeys=(function(){
 		'*':106, '+':107, '-':109, '.':110, '/':111, ';':186, '=':187, ',':188, //'-':189,'.':190, '/':191,
 		'`':192, '[':219, '\\':220, ']':221, '\'':222
 	},
-	MASKEYS={ ALT:1,CONTROL:2,CTRL:2,SHIFT:4 },
+	MASKEYS={ ALT:1,CONTROL:2,CTRL:2,SHIFT:4,META:8 },
 	list=[],
 	cold=function(){ return /INPUT|SELECT|TEXTAREA|KBD/.test(document.activeElement.tagName) },
 	trigger=function(e){
 		if(!e) e=window.event;
 		var i, k,
 			chr=String.fromCharCode(e.which || e.charCode).toUpperCase(),
-			msk=e.shiftKey*MASKEYS.SHIFT|e.ctrlKey*MASKEYS.CTRL|e.altKey*MASKEYS.ALT;
+			msk=e.shiftKey*MASKEYS.SHIFT|e.ctrlKey*MASKEYS.CTRL|e.altKey*MASKEYS.ALT|e.metaKey*MASKEYS.META;
 		for(i in list) {
 			k=list[i];
 			if((e.which==k.key || chr==k.key) && msk==k.mask) {
 				if(k.glob || !cold() || k.key==27) {
-					k.fn(e);
 					e.stopPropagation();
 					e.preventDefault();
+					k.fn(e);
 					return false;
 				}
 			}
@@ -121,33 +120,24 @@ hotkeys=(function(){
 		return true;
 	};
 	return {
-		clear: function() {
+		clear: function(){
 			document.onkeydown=null;
-			on=false;
 			list=[];
 			return this;
 		},
-		add: function(keys,fn,global) { 
-			var
-				mask=0,
-				skey=0,
-				i, j, key, lst, n;
+		add: function(keys,fn,global){ 
+			var msk=0, key=0;
 			if(typeof keys=="string") keys=[keys];
-			keys.forEach(function(key){
-				if(typeof key=="string") {
-					var keys = key == '+' ? ['+'] : key.toUpperCase().split('+');
-					keys.forEach(function(n){
-						if(MASKEYS[n]) mask|=MASKEYS[n];
-						else if(KEYS[n]) skey=KEYS[n];
-						else skey=n[0];
+			keys.forEach(function(k){
+				if(typeof(k)=="string")
+					(k == '+' ? ['+'] : k.toUpperCase().split('+')).forEach(function(n){
+						if(MASKEYS[n]) msk|=MASKEYS[n];
+						else if(KEYS[n]) key=KEYS[n];
+						else key=n[0];
 					});
-				}
-				if(skey) {
-					list.push({key:skey, fn:fn, glob:global, mask:mask||0});
-					if(!on){
-						document.onkeydown=trigger;
-						on=true;
-					}
+				if(key) {
+					list.push({key:key, fn:fn, glob:global, mask:msk||0});
+					if(list.length==1) document.onkeydown=trigger;
 				} else
 					console.error('hotkey '+key+' unknown');
 			});
@@ -164,7 +154,7 @@ browser=function(){
 	return b;
 }(),
 
-htmlencode=function(s) {
+htmlencode=function(s){
     return s
     	.replace(/&/g, '&amp;')
     	.replace(/</g, '&lt;')
